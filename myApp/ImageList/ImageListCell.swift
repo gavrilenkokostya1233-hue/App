@@ -17,6 +17,7 @@ final class ImageListCell: UITableViewCell {
     
     override func awakeFromNib() {
         super.awakeFromNib()
+        cellImage.isUserInteractionEnabled = false
         setupGradient()
         
     }
