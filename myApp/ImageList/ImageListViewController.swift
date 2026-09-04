@@ -16,6 +16,7 @@ class ImageListViewController: UIViewController, UITableViewDataSource, UITableV
         formatter.timeStyle = .none
         return formatter
     }()
+    private let showSingleImageSegueIdentifier = "ShowSingleImage"
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,7 +25,6 @@ class ImageListViewController: UIViewController, UITableViewDataSource, UITableV
         
         tableView.rowHeight = 200
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        
     }
     
     func configCell(for cell: ImageListCell, with indexPath: IndexPath) { 
@@ -44,10 +44,14 @@ class ImageListViewController: UIViewController, UITableViewDataSource, UITableV
         }
     }
     
-    func tableView( _ tableView: UITableView,
-        didSelectRowAt indexPath: IndexPath
-    ) {
-                
+    // MARK: - UITableViewDelegate
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        performSegue(
+            withIdentifier: showSingleImageSegueIdentifier,
+            sender: indexPath
+        )
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -55,15 +59,15 @@ class ImageListViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-            let cell = tableView.dequeueReusableCell(withIdentifier: ImageListCell.reuseIdentifier, for: indexPath) // 1
-            
-            guard let imageListCell = cell as? ImageListCell else { // 2
-                return UITableViewCell()
-            }
-            
-        configCell(for: imageListCell, with: indexPath) // 3
-            return imageListCell 
+        let cell = tableView.dequeueReusableCell(withIdentifier: ImageListCell.reuseIdentifier, for: indexPath)
+        
+        guard let imageListCell = cell as? ImageListCell else {
+            return UITableViewCell()
         }
+        
+        configCell(for: imageListCell, with: indexPath)
+        return imageListCell 
+    }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let imageName = photosName[indexPath.row]
@@ -76,5 +80,25 @@ class ImageListViewController: UIViewController, UITableViewDataSource, UITableV
         
         return heigthView 
     }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == showSingleImageSegueIdentifier {
+            guard
+                let viewController = segue.destination as? SingleImageViewController,
+                let indexPath = sender as? IndexPath
+            else {
+                assertionFailure("Invalid segue destination")
+                return
+            }
+
+            let imageName = photosName[indexPath.row]
+            let image = UIImage(named: imageName)
+            
+            viewController.image = image
+        } else {
+            super.prepare(for: segue, sender: sender)
+        }
+    }
 }
+
 
