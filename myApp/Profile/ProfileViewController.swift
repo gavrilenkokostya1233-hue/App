@@ -7,27 +7,29 @@
 
 import UIKit
 
-class ProfileViewController: UIViewController {
-    
-    @objc private func LogOut() {
-        
-    }
+final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let profileImage = UIImageView(image: UIImage(named: "Profile"))
-        let labelNameAndSurname = UILabel()
-        let username = UILabel()
-        let status = UILabel()
-        let button = UIButton.systemButton(
-            with: UIImage(named: "arrow.forward") ?? UIImage(),
-            target: self,
-            action: #selector(LogOut)
-        )
-        
-        // MARK: profileImage
-        
+        setupProfileImage()
+        setupButton()
+        setupLabels()
+        setupStackView()
+    }
+    
+    private let profileImage = UIImageView(image: UIImage(named: "Profile"))
+    private let labelNameAndSurname = UILabel()
+    private let username = UILabel()
+    private let status = UILabel()
+    private let button = UIButton.systemButton(
+        with: UIImage(named: "arrow.forward") ?? UIImage(),
+        target: ProfileViewController.self,
+        action: #selector(logOut)
+    )
+    private var stackView: UIStackView!
+    
+    private func setupProfileImage() {
         view.addSubview(profileImage)
         profileImage.translatesAutoresizingMaskIntoConstraints = false
         
@@ -37,19 +39,20 @@ class ProfileViewController: UIViewController {
         profileImage.widthAnchor.constraint(equalToConstant: 70).isActive = true
         profileImage.heightAnchor.constraint(equalToConstant: 70).isActive = true
         
-        // MARK: button
-        
+    }
+    
+    private func setupButton() {
         view.addSubview(button)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.tintColor = .red
-        
+        button.tintColor = .ypRed
         button.widthAnchor.constraint(equalToConstant: 44).isActive = true
         button.heightAnchor.constraint(equalToConstant: 44).isActive = true
         button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
         button.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
         
-        // MARK: stackView
-        
+    }
+    
+    private func setupLabels() {
         view.addSubview(labelNameAndSurname)
         labelNameAndSurname.translatesAutoresizingMaskIntoConstraints = false
         labelNameAndSurname.textColor = .white
@@ -68,11 +71,14 @@ class ProfileViewController: UIViewController {
         status.textColor = .white
         status.text = "Hello, world!"
         
-        let stackView = UIStackView(arrangedSubviews: [ 
-            labelNameAndSurname,
-            username,
-            status
-        ])
+    }
+    
+    private func setupStackView() {
+        
+        stackView = UIStackView(
+            arrangedSubviews: [labelNameAndSurname, username, status]
+        )
+        
         view.addSubview(stackView)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
@@ -84,4 +90,10 @@ class ProfileViewController: UIViewController {
         stackView.trailingAnchor
             .constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
     }
+    
+    @objc private func logOut() {
+        // TODO
+    }
+    
+    
 }
