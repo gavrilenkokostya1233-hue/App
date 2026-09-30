@@ -6,6 +6,10 @@
 	objectVersion = 110;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B55D60F6305C025F00300DBE /* WebKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B55D60F5305C025F00300DBE /* WebKit.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		B5B3198A301368AC004BFACF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B55D60F5305C025F00300DBE /* WebKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebKit.framework; path = System/Library/Frameworks/WebKit.framework; sourceTree = SDKROOT; };
 		B5B31973301368AB004BFACF /* myApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = myApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5B31989301368AC004BFACF /* myAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = myAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B5B31993301368AC004BFACF /* myAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = myAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -64,6 +69,7 @@
 		B5B31970301368AB004BFACF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			files = (
+				B55D60F6305C025F00300DBE /* WebKit.framework in Frameworks */,
 			);
 		};
 		B5B31986301368AC004BFACF /* Frameworks */ = {
@@ -79,12 +85,21 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B55D60F4305C025F00300DBE /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B55D60F5305C025F00300DBE /* WebKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		B5B3196A301368AB004BFACF = {
 			isa = PBXGroup;
 			children = (
 				B5B31975301368AB004BFACF /* myApp */,
 				B5B3198C301368AC004BFACF /* myAppTests */,
 				B5B31996301368AC004BFACF /* myAppUITests */,
+				B55D60F4305C025F00300DBE /* Frameworks */,
 				B5B31974301368AB004BFACF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -264,6 +279,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QGCMMC4WH3;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = myApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -300,6 +316,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QGCMMC4WH3;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = myApp/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
