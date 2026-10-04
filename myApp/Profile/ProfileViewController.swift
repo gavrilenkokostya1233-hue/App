@@ -4,21 +4,71 @@
 //
 //  Created by Konstantin on 06.08.2026.
 //
-
+import Kingfisher
 import UIKit
 
 final class ProfileViewController: UIViewController {
     
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        view.backgroundColor = .ypBlack
         setupProfileImage()
         setupButton()
         setupLabels()
         setupStackView()
+
+        guard let profile = ProfileService.shared.profile else {
+            return
+        }
+        
+        profileImageServiceObserver = NotificationCenter.default
+            .addObserver(
+                forName: ProfileImageService.didChangeNotification,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.updateAvatar()
+            }
+
+        updateAvatar()
+
+        updateProfileDetails(profile: profile)
+        loadProfileImage(from: profile.profileImageURL)
     }
     
-    private let profileImage = UIImageView(image: UIImage(named: "Profile"))
+    private func updateAvatar() {
+        guard let profileImageURL = ProfileImageService.shared.avatarURL else {
+            return
+        }
+
+        profileImage.kf.setImage(
+            with: URL(string: profileImageURL),
+            placeholder: UIImage(named: "Profile")
+        )
+    }
+    
+    private func updateProfileDetails(profile: ProfileService.Profile) {
+        labelNameAndSurname.text = profile.name
+        username.text = profile.loginName
+        status.text = profile.bio
+    }
+    
+    private func loadProfileImage(from urlString: String) {
+        guard let url = URL(string: urlString) else {
+            print("Не удалось создать URL аватарки")
+            return
+        }
+
+        profileImage.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "Profile")
+        )
+    }
+    
+    private let profileImage = UIImageView()
     private let labelNameAndSurname = UILabel()
     private let username = UILabel()
     private let status = UILabel()
@@ -58,18 +108,14 @@ final class ProfileViewController: UIViewController {
         labelNameAndSurname.textColor = .white
         labelNameAndSurname.font = UIFont.boldSystemFont(ofSize: 23)
         
-        labelNameAndSurname.text = "Екатерина Новикова"
-        
         
         view.addSubview(username)
         username.translatesAutoresizingMaskIntoConstraints = false
         username.textColor = .ypGray
-        username.text = "@ekaterina_nov"
         
         view.addSubview(status)
         status.translatesAutoresizingMaskIntoConstraints = false
         status.textColor = .white
-        status.text = "Hello, world!"
         
     }
     
@@ -92,7 +138,7 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc private func logOut() {
-        // TODO
+        
     }
     
     

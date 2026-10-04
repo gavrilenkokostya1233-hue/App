@@ -8,58 +8,93 @@ import UIKit
 
 class SplashViewController: UIViewController, AuthViewControllerDelegate {
    
-
+    private let profileService = ProfileService.shared
+    let storage = OAuth2TokenStorage.shared
     
-    let storage = OAuth2TokenStorage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let splashScreenLogo = UIImageView(image: UIImage(named: "Image"))
+        view.addSubview(splashScreenLogo)
+        splashScreenLogo.translatesAutoresizingMaskIntoConstraints = false
+        
+        splashScreenLogo.centerXAnchor
+            .constraint(equalTo: view.centerXAnchor).isActive = true
+        splashScreenLogo.centerYAnchor
+            .constraint(equalTo: view.centerYAnchor ).isActive = true
+        view.backgroundColor = .ypBlack
+        
         
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        if storage.token != nil {
-            switchToTabBarController()
+        if let token = storage.token {
+            fetchProfile(token: token)
         } else {
-            performSegue(withIdentifier: "ShowAuthenticationScreen", sender: nil)
+            let viewController = AuthViewController()
+            viewController.delegate = self 
+            viewController.modalPresentationStyle = .fullScreen
+            present(viewController, animated: true)
         }
-    }
+    }    
+    
     
     func didAuthenticate(_ vc: AuthViewController) {
         vc.dismiss(animated: true)
-        switchToTabBarController()
+        
+        guard let token = storage.token else {
+               return
+           }
+
+        fetchProfile(token: token)
     }
     
+    private func fetchProfile(token: String) {
+        UIBlockingProgressHUD.show()
+
+        profileService.fetchProfile(token) { [weak self] result in
+
+            UIBlockingProgressHUD.dismiss()
+
+            guard let self = self else { return }
+
+            switch result {
+            case .success(let profile):
+                ProfileImageService.shared.fetchProfileImageURL(
+                    username: profile.username
+                ) { _ in }
+
+                self.switchToTabBarController()
+
+            case .failure(let error):
+                print("Ошибка получения профиля:", error)
+            }
+        }
+    }
     
     private func switchToTabBarController() {
+
         let window = view.window
-        
+
         guard let window = window else {
-            return 
+            return
         }
-        
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(
-            identifier: "TabBarViewController")
+
+        let tabBarController = UIStoryboard(
+            name: "Main",
+            bundle: .main
+        ).instantiateViewController(
+            identifier: "TabBarViewController"
+        )
+
         window.rootViewController = tabBarController
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "ShowAuthenticationScreen" {
-            guard
-                let navigationController = segue.destination as? UINavigationController,
-                let viewController = navigationController.viewControllers.first as? AuthViewController
-            else {
-                return
-            }
-
-            viewController.delegate = self
-        }
-    }
     
-    
-    private func switchNavigationController() {
+        private func switchNavigationController() {
         let window = view.window
         
         guard let window = window else {
