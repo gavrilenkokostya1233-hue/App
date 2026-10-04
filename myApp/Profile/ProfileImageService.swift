@@ -13,10 +13,8 @@ final class ProfileImageService {
 
     private var task: URLSessionTask?
 
-    static let didChangeNotification = Notification.Name(
-        rawValue: "ProfileImageProviderDidChange"
-    )
-
+    static let didChangeNotification = Notification.Name("ProfileImageProviderDidChange")
+    
     private init() {}
 
     struct UserResult: Codable {

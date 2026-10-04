@@ -43,10 +43,12 @@ final class ProfileViewController: UIViewController {
         guard let profileImageURL = ProfileImageService.shared.avatarURL else {
             return
         }
+        
+        profileImage.kf.indicatorType = .activity
 
         profileImage.kf.setImage(
             with: URL(string: profileImageURL),
-            placeholder: UIImage(named: "Profile")
+            placeholder: UIImage(resource: .profile)
         )
     }
     

@@ -190,7 +190,7 @@
         <!--Auth View Controller-->
         <scene sceneID="w0L-K5-ebK">
             <objects>
-                <viewController id="H7t-4N-twd" customClass="AuthViewController" customModule="myApp" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="AuthViewController" id="H7t-4N-twd" customClass="AuthViewController" customModule="myApp" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="9JR-x2-Erk">
                         <rect key="frame" x="0.0" y="0.0" width="420" height="912"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -285,7 +285,6 @@
         <!--Tab Bar View Controller-->
         <scene sceneID="jQM-8m-d09">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="BVZ-Dq-59a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
                 <tabBarController storyboardIdentifier="TabBarViewController" id="5w8-w0-ztw" customClass="TabBarViewController" customModule="myApp" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" id="x3z-pF-2rt"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="yje-o9-TEQ">
@@ -295,6 +294,7 @@
                         <color key="selectedImageTintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     </tabBar>
                 </tabBarController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BVZ-Dq-59a" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2351.4285714285716" y="-14.473684210526315"/>
         </scene>
