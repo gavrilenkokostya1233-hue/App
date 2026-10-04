@@ -7,7 +7,7 @@
 
 import UIKit
 
-class SingleImageViewController: UIViewController, UIScrollViewDelegate {
+final class SingleImageViewController: UIViewController, UIScrollViewDelegate {
     
     var image: UIImage? {
         didSet {

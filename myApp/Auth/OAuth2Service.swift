@@ -23,6 +23,62 @@ final class OAuth2Service {
 
     private init() {}
 
+    func fetchOAuthToken(
+        code: String,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+
+        assert(Thread.isMainThread)
+
+        if task != nil {
+
+            if lastCode != code {
+                task?.cancel()
+            } else {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+            
+        } else {
+
+            if lastCode == code {
+                completion(.failure(AuthServiceError.invalidRequest))
+                return
+            }
+        }
+
+        lastCode = code
+
+        guard let urlRequest = makeOAuthTokenRequest(code: code) else {
+            print("[OAuth2Service]: Не удалось создать запрос")
+            completion(.failure(AuthServiceError.invalidRequest))
+            return
+        }
+
+        let task = urlSession.objectTask(
+            for: urlRequest
+        ) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+
+                switch result {
+
+                case .success(let tokenResponse):
+                    let token = tokenResponse.accessToken
+                    self?.tokenStorage.token = token
+                    completion(.success(token))
+
+                case .failure(let error):
+                    print("[OAuth2Service]: \(error)")
+                    completion(.failure(error))
+                }
+
+                self?.task = nil
+                self?.lastCode = nil
+        }
+
+        self.task = task
+        task.resume()
+    }
+    
     private func makeOAuthTokenRequest(code: String) -> URLRequest? {
 
         guard var urlComponents = URLComponents(
@@ -46,71 +102,8 @@ final class OAuth2Service {
         }
 
         var request = URLRequest(url: authTokenUrl)
-        request.httpMethod = "POST"
+        request.httpMethod = HTTPMethod.post.rawValue
 
         return request
-    }
-
-    func fetchOAuthToken(
-        code: String,
-        completion: @escaping (Result<String, Error>) -> Void
-    ) {
-
-        assert(Thread.isMainThread)
-
-        // Если запрос уже выполняется
-        if task != nil {
-
-            // Пришёл новый code — отменяем старый запрос
-            if lastCode != code {
-                task?.cancel()
-            } else {
-                // Тот же code уже обрабатывается
-                completion(.failure(AuthServiceError.invalidRequest))
-                return
-            }
-
-        } else {
-
-            // Запроса сейчас нет, но такой code уже использовался
-            if lastCode == code {
-                completion(.failure(AuthServiceError.invalidRequest))
-                return
-            }
-        }
-
-        lastCode = code
-
-        guard let urlRequest = makeOAuthTokenRequest(code: code) else {
-            print("[OAuth2Service]: Не удалось создать запрос")
-            completion(.failure(AuthServiceError.invalidRequest))
-            return
-        }
-
-        let task = urlSession.objectTask(
-            for: urlRequest
-        ) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
-
-            DispatchQueue.main.async {
-
-                switch result {
-
-                case .success(let tokenResponse):
-                    let token = tokenResponse.accessToken
-                    self?.tokenStorage.token = token
-                    completion(.success(token))
-
-                case .failure(let error):
-                    print("[OAuth2Service]: \(error)")
-                    completion(.failure(error))
-                }
-
-                self?.task = nil
-                self?.lastCode = nil
-            }
-        }
-
-        self.task = task
-        task.resume()
     }
 }

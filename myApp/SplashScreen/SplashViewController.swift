@@ -6,11 +6,11 @@
 //
 import UIKit
 
-class SplashViewController: UIViewController, AuthViewControllerDelegate {
+final class SplashViewController: UIViewController, AuthViewControllerDelegate {
    
     private let profileService = ProfileService.shared
     let storage = OAuth2TokenStorage.shared
-    
+    private var didCompleteAuthentication = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,10 +31,16 @@ class SplashViewController: UIViewController, AuthViewControllerDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
+        if didCompleteAuthentication {
+            return
+        }
+        
+        
         if let token = storage.token {
             fetchProfile(token: token)
         } else {
-            let viewController = AuthViewController()
+            let viewController = UIStoryboard(name: "Main", bundle: .main)
+                .instantiateViewController(withIdentifier: "AuthViewController") as! AuthViewController
             viewController.delegate = self 
             viewController.modalPresentationStyle = .fullScreen
             present(viewController, animated: true)
@@ -46,20 +52,23 @@ class SplashViewController: UIViewController, AuthViewControllerDelegate {
         vc.dismiss(animated: true)
         
         guard let token = storage.token else {
-               return
-           }
-
+            return
+        }
+        
+        didCompleteAuthentication = true
         fetchProfile(token: token)
     }
     
     private func fetchProfile(token: String) {
+        print("🔥 ПОКАЗЫВАЕМ HUD")
         UIBlockingProgressHUD.show()
+        print("🔥 HUD ПОКАЗАН")
 
         profileService.fetchProfile(token) { [weak self] result in
 
             UIBlockingProgressHUD.dismiss()
 
-            guard let self = self else { return }
+            guard let self else { return }
 
             switch result {
             case .success(let profile):
