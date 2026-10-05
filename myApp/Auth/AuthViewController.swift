@@ -33,7 +33,7 @@ final class AuthViewController: UIViewController, WebViewViewControllerDelegate 
             UIBlockingProgressHUD.dismiss()
     
             switch result {
-            case .success(let token):
+            case .success:
                 self.delegate?.didAuthenticate(self)
             case .failure(let error):
                 print(error)

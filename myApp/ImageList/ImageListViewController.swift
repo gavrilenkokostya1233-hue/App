@@ -38,9 +38,9 @@ final class ImageListViewController: UIViewController, UITableViewDataSource, UI
         cell.dateLabel.text = dateFormatter.string(from: Date())
         
         if indexPath.row % 2 == 0 {
-            cell.likeButton.tintColor = .systemRed
+            cell.likeButton.tintColor = .ypRed
         } else {
-            cell.likeButton.tintColor = .systemGray
+            cell.likeButton.tintColor = .noActive
         }
     }
     

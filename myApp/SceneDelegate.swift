@@ -13,8 +13,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-        guard let scene = scene as? UIWindowScene else { return }
-        OAuth2TokenStorage.shared.token = nil
+        guard let scene = scene as? UIWindowScene else { return }ы
         window = UIWindow(windowScene: scene)                   
         window?.rootViewController = SplashViewController()
         window?.makeKeyAndVisible()
