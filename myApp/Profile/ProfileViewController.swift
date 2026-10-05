@@ -90,6 +90,8 @@ final class ProfileViewController: UIViewController {
             .constraint(equalTo: view.topAnchor, constant: 76).isActive = true
         profileImage.widthAnchor.constraint(equalToConstant: 70).isActive = true
         profileImage.heightAnchor.constraint(equalToConstant: 70).isActive = true
+        profileImage.layer.cornerRadius = 35
+        profileImage.clipsToBounds = true
         
     }
     
