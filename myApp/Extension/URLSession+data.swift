@@ -37,6 +37,12 @@ extension URLSession {
                 if 200 ..< 300 ~= statusCode {
                     fulfillCompletionOnTheMainThread(.success(data))
                 } else {
+                    print("STATUS:", statusCode)
+
+                    if let httpResponse = response as? HTTPURLResponse {
+                        print("HEADERS:", httpResponse.allHeaderFields)
+                    }
+
                     let error = NetworkError.httpStatusCode(statusCode)
                     print("[data(for:)]: \(error)")
                     fulfillCompletionOnTheMainThread(.failure(error))
@@ -65,7 +71,7 @@ extension URLSession {
     ) -> URLSessionTask {
 
         let decoder = JSONDecoder()
-
+        decoder.dateDecodingStrategy = .iso8601
         let task = data(for: request) { result in
 
             switch result {

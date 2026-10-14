@@ -54,6 +54,7 @@ final class ProfileService {
     private(set) var profile: Profile?
 
     private func makeProfileRequest(token: String) -> URLRequest? {
+        
         guard let url = URL(string: "https://api.unsplash.com/me") else {
             return nil
         }
@@ -155,5 +156,12 @@ final class ProfileService {
 
         self.task = task
         task.resume()
+    }
+    
+    
+    func cleanProfile() {
+        task?.cancel()
+        task = nil
+        profile = nil
     }
 }
