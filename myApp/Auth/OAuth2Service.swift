@@ -89,7 +89,7 @@ final class OAuth2Service {
         }
 
         urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: Constants.accesKey),
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
             URLQueryItem(name: "client_secret", value: Constants.secretKey),
             URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
             URLQueryItem(name: "code", value: code),

@@ -154,7 +154,7 @@ final class ImagesListService {
         photos.removeAll()
         currentPage = 0
         isLoading = false
-        task = nil
         task?.cancel()
+        task = nil
     }
 }
