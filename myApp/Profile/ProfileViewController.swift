@@ -7,9 +7,16 @@
 import Kingfisher
 import UIKit
 
-final class ProfileViewController: UIViewController {
+protocol ProfileViewControllerProtocol: AnyObject {
+    var presenter: ProfilePresenterProtocol? { get set }
+    func updateProfileDetails(profile: ProfileResultModel) 
+    func updateAvatar(with url: URL?)
+}
+
+final class ProfileViewController: UIViewController, ProfileViewControllerProtocol {
     
-    private var profileImageServiceObserver: NSObjectProtocol?
+    var presenter: ProfilePresenterProtocol?
+    
     private var animationLayers = Set<CALayer>()
     private var isFirstLayout = true
     
@@ -33,19 +40,7 @@ final class ProfileViewController: UIViewController {
         setupLabels()
         setupStackView()
 
-        profileImageServiceObserver = NotificationCenter.default
-            .addObserver(
-                forName: ProfileImageService.didChangeNotification,
-                object: nil,
-                queue: .main
-            ) { [weak self] _ in
-                self?.updateAvatar()
-            }
-
-        if let profile = ProfileService.shared.profile {
-            updateProfileDetails(profile: profile)
-            loadProfileImage(from: profile.profileImageURL)
-        }
+        presenter?.viewDidLoad()
     }
     
     override func viewDidLayoutSubviews() {
@@ -55,6 +50,49 @@ final class ProfileViewController: UIViewController {
             showLoadingAnimation()
             isFirstLayout = false
         }
+    }
+    
+    // MARK: - ProfileViewControllerProtocol
+    
+    func updateProfileDetails(profile: ProfileResultModel) {
+        labelNameAndSurname.text = profile.name
+        username.text = profile.loginName
+        status.text = profile.bio
+        
+        removeLoadingAnimation()
+        
+        view.layoutIfNeeded()
+    }
+    
+    func updateAvatar(with url: URL?) {
+        guard let url = url else { return }
+        
+        profileImage.kf.indicatorType = .activity
+        profileImage.kf.setImage(
+            with: url,
+            placeholder: UIImage(named: "Profile")
+        ) { [weak self] _ in
+            self?.removeLoadingAnimation()
+        }
+    }
+    
+    @objc private func logOut() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены, что хотите выйти?",
+            preferredStyle: .alert
+        )
+        
+        let yesAction = UIAlertAction(title: "Yes", style: .destructive) { [weak self] _ in
+            self?.presenter?.didTapLogoutButton()
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(yesAction)
+        alert.addAction(cancelAction)
+        
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: - Gradient & Shimmer Loading
@@ -116,42 +154,6 @@ final class ProfileViewController: UIViewController {
         animationLayers.removeAll()
     }
     
-    // MARK: - Profile Updates
-    
-    private func updateAvatar() {
-        guard let profileImageURL = ProfileImageService.shared.avatarURL else {
-            return
-        }
-        
-        profileImage.kf.indicatorType = .activity
-
-        profileImage.kf.setImage(
-            with: URL(string: profileImageURL),
-            placeholder: UIImage(resource: .profile)
-        ) { [weak self] _ in
-            self?.removeLoadingAnimation()
-        }
-    }
-    
-    private func updateProfileDetails(profile: ProfileService.Profile) {
-        labelNameAndSurname.text = profile.name
-        username.text = profile.loginName
-        status.text = profile.bio
-        
-        removeLoadingAnimation()
-    }
-    
-    private func loadProfileImage(from urlString: String) {
-        guard let url = URL(string: urlString) else { return }
-
-        profileImage.kf.setImage(
-            with: url,
-            placeholder: UIImage(named: "Profile")
-        ) { [weak self] _ in
-            self?.removeLoadingAnimation()
-        }
-    }
-    
     // MARK: - Setup UI
     
     private func setupProfileImage() {
@@ -174,6 +176,8 @@ final class ProfileViewController: UIViewController {
         button.heightAnchor.constraint(equalToConstant: 44).isActive = true
         button.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
         button.centerYAnchor.constraint(equalTo: profileImage.centerYAnchor).isActive = true
+        
+        button.accessibilityIdentifier = "logout button"
     }
     
     private func setupLabels() {
@@ -204,9 +208,5 @@ final class ProfileViewController: UIViewController {
         stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16).isActive = true
         stackView.topAnchor.constraint(equalTo: profileImage.bottomAnchor, constant: 10).isActive = true
         stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16).isActive = true
-    }
-    
-    @objc private func logOut() {
-        ProfileLogoutService.shared.logout()
     }
 }
